@@ -35,17 +35,18 @@
     return "/api/p/" + S.pid + "/" + view + (s ? "?" + s : "");
   };
   const fileUrl = path => P("file", { path });
-  const money = (v, d) => v == null ? "n/a" : (v < 0 ? "-$" : "$") + Math.abs(v).toLocaleString(undefined, { minimumFractionDigits: d == null ? 0 : d, maximumFractionDigits: d == null ? 0 : d });
+  const LOC = () => (I18N.lang === "pt" ? "pt-BR" : "en-US");  // numbers follow the UI language, not the browser
+  const money = (v, d) => v == null ? "n/a" : (v < 0 ? "-$" : "$") + Math.abs(v).toLocaleString(LOC(), { minimumFractionDigits: d == null ? 0 : d, maximumFractionDigits: d == null ? 0 : d });
   const money2 = v => money(v, 2);
   const pct = (v, d) => v == null ? "n/a" : (v * 100).toFixed(d || 0) + "%";
-  const intf = v => v == null ? "n/a" : (isFinite(v) ? Math.ceil(v).toLocaleString() : "never");
+  const intf = v => v == null ? "n/a" : (isFinite(v) ? Math.ceil(v).toLocaleString(LOC()) : "never");
   function ago(ts) {
     if (!ts) return "";
     const s = Date.now() / 1000 - ts;
     if (s < 60) return t("just now");
     if (s < 3600) return t("{n} min ago", { n: Math.floor(s / 60) });
     if (s < 86400) return t("{n} h ago", { n: Math.floor(s / 3600) });
-    return new Date(ts * 1000).toLocaleDateString();
+    return new Date(ts * 1000).toLocaleDateString(LOC());
   }
   function toast(msg) {
     const el = $("#toast"); el.textContent = msg; el.hidden = false;
@@ -119,7 +120,7 @@
     const running = st.steps.filter(s => s.status === "running").map(s => s.key);
     let h = '<div class="head"><div><h1>' + esc(st.name) + '</h1><div class="path">' + esc(st.root) + "</div></div>" +
       '<div class="actions"><span class="verdict ' + esc(v.replace(" ", "-")) + '">' + esc(t(v)) + "</span>";
-    if (SNAP) h += '<span class="snapshot-note">' + esc(t("Exported {d}, read-only", { d: new Date(SNAP.exported * 1000).toLocaleString() })) + "</span>";
+    if (SNAP) h += '<span class="snapshot-note">' + esc(t("Exported {d}, read-only", { d: new Date(SNAP.exported * 1000).toLocaleString(LOC()) })) + "</span>";
     else h += '<a class="btn" href="/api/p/' + S.pid + '/export">⤓ ' + esc(t("Export HTML")) + "</a>" +
       '<button class="btn" id="snap-btn">◷ ' + esc(t("Save round")) + "</button>" +
       '<button class="btn danger sm" id="forget">' + esc(t("Forget")) + "</button>";
@@ -142,7 +143,7 @@
   function bindHeader() {
     const sb = $("#snap-btn");
     if (sb) sb.onclick = async () => {
-      const label = (S.ui.roundLabel || "").trim() || t("Round") + " " + new Date().toLocaleString();
+      const label = (S.ui.roundLabel || "").trim() || t("Round") + " " + new Date().toLocaleString(LOC());
       try { await api("/api/p/" + S.pid + "/rounds", { method: "POST", body: { label } }); toast(t("Round saved")); if (S.tab === "rounds") renderView(); }
       catch (e) { toast(e.message); }
     };
@@ -461,7 +462,7 @@
         $("#wi-note").textContent = t("showing the what-if; grey bars are the plan");
         const d = (x, y, f, good) => { const diff = x - y; return f(x) + ' <small class="' + ((good ? diff >= 0 : diff <= 0) ? "up" : "down") + '">' + (diff >= 0 ? "+" : "") + f(diff) + "</small>"; };
         $("#wi-out").innerHTML = '<table class="t"><tr><td>' + esc(t("contribution")) + '</td><td class="r">' + d(w.contribution, a.contribution, money2, true) + "</td></tr><tr><td>" + esc(t("break-even/day")) + '</td><td class="r">' +
-          (w.breakeven_per_day == null ? t("never") : d(Math.ceil(w.breakeven_per_day), Math.ceil(a.breakeven_per_day), v => Math.round(v).toLocaleString(), false)) + "</td></tr><tr><td>" + esc(t("year 1 profit")) + '</td><td class="r">' + d(w.year1_profit, a.year1_profit, money, true) +
+          (w.breakeven_per_day == null ? t("never") : d(Math.ceil(w.breakeven_per_day), Math.ceil(a.breakeven_per_day), v => Math.round(v).toLocaleString(LOC()), false)) + "</td></tr><tr><td>" + esc(t("year 1 profit")) + '</td><td class="r">' + d(w.year1_profit, a.year1_profit, money, true) +
           "</td></tr><tr><td>" + esc(t("cash needed")) + '</td><td class="r">' + d(w.cash_needed, a.cash_needed, money, false) + "</td></tr><tr><td>" + esc(t("payback")) + '</td><td class="r">' + (w.payback_month ? t("month {m}", { m: w.payback_month }) : t("not in year 1")) + "</td></tr></table>";
       } catch (e) { $("#wi-out").innerHTML = '<div class="banner warn">' + esc(e.message) + "</div>"; }
     };
@@ -562,7 +563,7 @@
     if (!list.length) h += empty(esc(t("No rounds yet.")));
     else {
       h += '<div class="card table-wrap"><table class="t"><thead><tr><th>' + esc(t("round")) + "</th>" + rows.map(r => '<th class="r">' + esc(t(r[0])) + "</th>").join("") + "<th></th></tr></thead><tbody>" +
-        list.map(r => "<tr><td><b>" + esc(r.label) + "</b><br><small>" + esc(new Date(r.created * 1000).toLocaleString()) + "</small></td>" + rows.map(x => '<td class="r">' + esc(x[1](r.metrics)) + "</td>").join("") +
+        list.map(r => "<tr><td><b>" + esc(r.label) + "</b><br><small>" + esc(new Date(r.created * 1000).toLocaleString(LOC())) + "</small></td>" + rows.map(x => '<td class="r">' + esc(x[1](r.metrics)) + "</td>").join("") +
           '<td><a class="btn sm" href="#/p/' + S.pid + "/pipeline?round=" + encodeURIComponent(r.id) + '">' + esc(t("View")) + "</a></td></tr>").join("") + "</tbody></table></div>";
       const opts = cur => ['<option value="current"' + (cur === "current" ? " selected" : "") + ">" + esc(t("current")) + "</option>"].concat(list.map(r => '<option value="' + esc(r.id) + '"' + (r.id === cur ? " selected" : "") + ">" + esc(r.label) + "</option>")).join("");
       h += '<div class="card" style="margin-top:14px"><div class="card-head"><h2>' + esc(t("Compare")) + '</h2><div style="display:flex;gap:8px;align-items:center"><select id="ra" style="width:auto">' + opts(ui.a) + '</select>→<select id="rb" style="width:auto">' + opts(ui.b) + '</select></div></div><div id="cmp">…</div></div>';

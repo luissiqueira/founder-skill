@@ -147,6 +147,10 @@ side by side, the buyer panel filling in live, the price curves, the CFO's year 
 with a what-if simulator, every document, and rounds to compare one version of
 the business with the next. Standard library only, like the tools.
 
+![Founder GUI: the pipeline, the computed verdict and the board's conditions](docs/screenshots/pipeline.png)
+
+![Founder GUI: the consumer panel, one tile per simulated buyer, with a buyer's answer open](docs/screenshots/panel.png)
+
 ```bash
 python3 gui/serve.py --dir path/to/project   # or /founder-skill:founder-gui in Claude Code
 python3 gui/demo.py /tmp/moss-demo            # try it on the matcha café example

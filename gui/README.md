@@ -16,6 +16,8 @@ python3 gui/serve.py --dir /tmp/moss-demo
 
 From Claude Code, with the plugin installed: `/founder-skill:founder-gui`.
 
+![The pipeline view](../docs/screenshots/pipeline.png)
+
 ## What it shows
 
 | view | what is on it |
@@ -31,6 +33,8 @@ From Claude Code, with the plugin installed: `/founder-skill:founder-gui`.
 | Feedback | what you asked each skill to change, keep or answer |
 | Rounds | dated copies of `founder/`, compared side by side |
 | Runs | run a step from the browser and keep talking to it |
+
+![The consumer panel, with one buyer open](../docs/screenshots/panel.png)
 
 ## The four phases
 
