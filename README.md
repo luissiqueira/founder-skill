@@ -138,6 +138,33 @@ expensiveness, the optimal and the indifference price.
 python3 -m unittest discover -s tests -v
 ```
 
+## Founder GUI (this fork)
+
+Following the pack in a terminal gets hard once the panel has 100 buyers and the
+plan has eleven parts. This fork adds a local web page, `gui/`, that follows the
+`founder/` folder while the skills run: the pipeline and its verdict, the board
+side by side, the buyer panel filling in live, the price curves, the CFO's year 1
+with a what-if simulator, every document, and rounds to compare one version of
+the business with the next. Standard library only, like the tools.
+
+```bash
+python3 gui/serve.py --dir path/to/project   # or /founder-skill:founder-gui in Claude Code
+python3 gui/demo.py /tmp/moss-demo            # try it on the matcha café example
+```
+
+It also closes the loop: press 💬 on any paragraph to leave feedback in
+`founder/feedback/<step>.md`, which every skill in this fork reads before it
+runs, and start a step from the page (`claude -p`, streamed live, with its
+questions answered in the page). One hub serves every project on the machine.
+Details: [`gui/README.md`](gui/README.md).
+
+Install the fork as a plugin:
+
+```
+/plugin marketplace add luissiqueira/founder-skill
+/plugin install founder-skill@founder-skill
+```
+
 ## Fine print
 
 **The board applies published frameworks. It is not those people.** The three
